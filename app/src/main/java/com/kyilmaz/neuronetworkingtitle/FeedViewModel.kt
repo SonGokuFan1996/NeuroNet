@@ -96,6 +96,7 @@ class FeedViewModel : ViewModel() {
     // --- Developer Mode Flags ---
     var simulateError = false
     var simulateInfiniteLoading = false
+    private var realPremiumStatus = false
 
     init {
         fetchPosts()
@@ -104,6 +105,7 @@ class FeedViewModel : ViewModel() {
 
     // Call this when RevenueCat confirms a purchase or restores entitlements
     fun setPremiumStatus(isPremium: Boolean) {
+        realPremiumStatus = isPremium
         // Only set the real premium status if the fake toggle is OFF
         if (!_uiState.value.isFakePremiumEnabled) {
             _uiState.update { it.copy(isPremium = isPremium) }
@@ -114,9 +116,25 @@ class FeedViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 isFakePremiumEnabled = enabled,
-                isPremium = enabled // Immediately apply the fake status
+                isPremium = if (enabled) true else realPremiumStatus
             )
         }
+    }
+
+    fun setSimulateError(enabled: Boolean) {
+        simulateError = enabled
+        if (enabled) {
+            simulateInfiniteLoading = false
+        }
+        fetchPosts()
+    }
+
+    fun setSimulateInfiniteLoading(enabled: Boolean) {
+        simulateInfiniteLoading = enabled
+        if (enabled) {
+            simulateError = false
+        }
+        fetchPosts()
     }
 
     fun toggleStories(enabled: Boolean) {
@@ -195,7 +213,7 @@ class FeedViewModel : ViewModel() {
             if (_uiState.value.isMockInterfaceEnabled) {
                 delay(500)
                 val newPost = Post(
-                    id = System.currentTimeMillis(),
+                    id = java.lang.System.currentTimeMillis(),
                     userId = "Me",
                     userAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=Me",
                     content = content,
@@ -325,7 +343,7 @@ class FeedViewModel : ViewModel() {
     fun addComment(content: String) {
         val postId = _uiState.value.activePostId ?: return
         val newComment = Comment(
-            id = System.currentTimeMillis(),
+            id = java.lang.System.currentTimeMillis(),
             postId = postId,
             userId = "Me",
             content = content,
