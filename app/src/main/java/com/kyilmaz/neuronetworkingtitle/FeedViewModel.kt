@@ -213,7 +213,7 @@ class FeedViewModel : ViewModel() {
             if (_uiState.value.isMockInterfaceEnabled) {
                 delay(500)
                 val newPost = Post(
-                    id = System.currentTimeMillis(),
+                    id = java.lang.System.currentTimeMillis(),
                     userId = "Me",
                     userAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=Me",
                     content = content,
@@ -343,7 +343,7 @@ class FeedViewModel : ViewModel() {
     fun addComment(content: String) {
         val postId = _uiState.value.activePostId ?: return
         val newComment = Comment(
-            id = System.currentTimeMillis(),
+            id = java.lang.System.currentTimeMillis(),
             postId = postId,
             userId = "Me",
             content = content,
